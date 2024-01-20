@@ -13,24 +13,25 @@ import WatchedMovieList from "./component/main/watchedMovies/WatchedMovieList";
 import Loader from "./component/helper/Loader";
 import ErrorMessage from "./component/helper/ErrorMessage";
 import MovieDetails from "./component/main/movies/MovieDetails";
+import useMovies from "./component/customhook/useMovies";
+import useLocalStorageState from "./component/customhook/useLocalStorageState";
 
 
-const key ='fa150a4c'
+
 
 export default function App() {
   
   const [query,setQuery] = useState('');
-  const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
-  const [isLoading,setIsLoading] = useState(false);
-  const [error,setError] = useState('');
   const [selectedId,setSelectedId] = useState(null);
+  const {movies,error,isLoading} = useMovies(query);
+  const [watched,setWatched] = useLocalStorageState([],'watched');
+ 
 
-  const handleSelectedMovie =(id)=>{
+  function handleSelectedMovie (id){
     setSelectedId((selectedId)=>(id === selectedId ? null : id));
   }
 
-  const handleClosedMovie =()=>{
+ function handleClosedMovie() {
     setSelectedId(null);
   }
 
@@ -42,36 +43,7 @@ export default function App() {
     setWatched((watched)=>watched.filter(movie=>movie.imdbId!==id));
   }
 
-  useEffect(()=>{
-    async function fetchMovies(){
-      setIsLoading(true);
-      setError('');
-      try{
-        const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${key}`)
-        if(!res.ok){
-          throw new Error("Something went wrong with fetching movies");
-        }
-        const data = await res.json();
-        if(data.Responce === 'False') throw new Error("Movie not found")
-        
-       setMovies(data.Search);
-      }catch(err){
-        console.log(err)
-        setError(err.message);
-      }finally{
-        setIsLoading(false);
-      }
-    }
-    if(query.length < 3){
-      setMovies([]);
-      setError("");
-      return;
-    }
-    handleClosedMovie()
-    fetchMovies()
-  },[query])
-  
-  return (
+ return (
     <>
     <Navbar> 
     <Search query={query} setQuery={setQuery}/>
