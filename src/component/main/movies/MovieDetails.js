@@ -39,6 +39,8 @@ const MovieDetails = ({selectedId,onCloseMovie,onAddWatched,watched}) => {
     onCloseMovie();
   }
 
+ 
+
   useEffect(()=>{
     async function getMovieDetails(selectedId){
       try{
