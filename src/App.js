@@ -41,6 +41,7 @@ export default function App() {
   function handleDeleteWatched(id){
     setWatched((watched)=>watched.filter(movie=>movie.imdbId!==id));
   }
+
   useEffect(()=>{
     async function fetchMovies(){
       setIsLoading(true);
@@ -66,9 +67,10 @@ export default function App() {
       setError("");
       return;
     }
+    handleClosedMovie()
     fetchMovies()
   },[query])
-  // console.log(watched);
+  
   return (
     <>
     <Navbar> 
